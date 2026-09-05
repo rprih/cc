@@ -10,19 +10,18 @@ end
 
 local out = mon or term
 
--- ME Bridge only reports item-type capacity via storage cell info, not a
--- single "types total" call, so we derive it by summing each item cell's
--- (totalBytes / bytesPerType).
+-- ME Bridge has no single "types total" call, so we derive network-wide
+-- item-type capacity by summing totalTypes across item storage cells.
 local function getTypeCapacity()
-  local cells, err = me.listCells()
+  local cells, err = me.getCells()
   if not cells then
     return nil, err
   end
 
   local capacity = 0
   for _, cell in ipairs(cells) do
-    if cell.cellType == "item" and cell.bytesPerType and cell.bytesPerType > 0 then
-      capacity = capacity + math.floor(cell.totalBytes / cell.bytesPerType)
+    if cell.type == "ae2:i" then
+      capacity = capacity + (cell.totalTypes or 0)
     end
   end
   return capacity
@@ -30,7 +29,7 @@ end
 
 -- Item type count (used) and total item count come from the same item list.
 local function getItemStats()
-  local items, err = me.listItems()
+  local items, err = me.getItems()
   if not items then
     return nil, nil, err
   end
@@ -38,7 +37,7 @@ local function getItemStats()
   local typesUsed, itemsTotal = 0, 0
   for _, item in ipairs(items) do
     typesUsed = typesUsed + 1
-    itemsTotal = itemsTotal + (item.amount or 0)
+    itemsTotal = itemsTotal + (item.count or 0)
   end
   return typesUsed, itemsTotal
 end

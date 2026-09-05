@@ -29,18 +29,20 @@ Note: an ME Bridge peripheral (`peripheral.find("me_bridge")`, as used in `show_
 
 ### ME Bridge peripheral API (Advanced Peripherals 0.7.x)
 
-Reference: https://docs.advanced-peripherals.de/0.7/peripherals/me_bridge/
+Reference: https://docs.advanced-peripherals.de/0.7/guides/storage_system_functions/ (this "Storage System Functions" guide covers both the RS Bridge and ME Bridge — it's the accurate one to use).
 
-Relevant methods for reading AE2 network item storage (all calls that can fail return `table, nil` on success or `nil, err: string` on failure — always check for `nil` before iterating):
+**Important:** other pages under `docs.advanced-peripherals.de/0.7/peripherals/me_bridge/` (and some third-party summaries) document `listItems()`/`listCells()` — those names are wrong/stale for the installed `AdvancedPeripherals-1.21.1-0.7.62b.jar`. The real peripheral (confirmed against the mod's source on the `release/1.21.1` branch) exposes `getItems()` / `getCells()`. Calling `me.listItems()` fails at runtime with `attempt to call field 'listItems' (a nil value)`. Always use the `get*` names below.
 
-- `me.listItems()` — list of all items in the ME system; each entry has `name`, `displayName`, `amount`, `isCraftable`, `nbt?`, `tags`, `fingerprint?`. Item **types used** = number of entries; **items total** = sum of `amount` across entries.
-- `me.getItem(filter: table)` — same fields as one `listItems()` entry, for a single filtered item.
-- `me.listCraftableItems()` — same shape as `listItems()`, restricted to craftable items.
-- `me.listCells()` — one entry per storage cell in the network's disk drives: `item` (the cell itself), `cellType` (`"item"` or `"fluid"`), `bytesPerType`, `totalBytes`. There is no direct "total item types" call — derive network-wide type capacity by summing `totalBytes / bytesPerType` over cells where `cellType == "item"`.
-- `me.getTotalItemStorage()` / `me.getUsedItemStorage()` / `me.getAvailableItemStorage()` — byte-based storage capacity/used/free for items (mirrored by `*FluidStorage()` variants for fluids).
-- `me.listFluid()`, `me.listGas()` — analogous listings for fluids/gases.
+All calls below that can fail return `table, nil` on success or `nil, err: string` on failure — check for `nil` before iterating.
 
-`show_me_status.lua` combines `listItems()` + `listCells()` to report item-type usage (used/free/total) and total item count, plus the raw byte-storage numbers from `get*ItemStorage()`.
+- `me.getItems(filter?: table)` — list of all items in the ME system (empty/no filter table returns everything). Each entry is an item stack table with `count` (**not** `amount`), `displayName`, `name`, `maxStackSize`, `fingerprint`, `isCraftable`. Item **types used** = number of entries returned; **items total** = sum of `count` across entries.
+- `me.getItem(filter: table)` — same shape as one `getItems()` entry, for a single filtered item.
+- `me.getCraftableItems(filter?: table)` — same shape as `getItems()`, restricted to craftable items.
+- `me.getCells()` — flat list of every storage cell across the network's ME Drives. Each entry ("AE2 Disk"): `item` (the cell item itself), `type` (AE2 key-type id, e.g. `"ae2:i"` for item cells, `"ae2:f"` for fluid cells), `bytes`, `bytesPerType`, `usedBytes`, `totalTypes`, `fuzzyMode`. There's no single "total item types" call — derive network-wide type capacity by summing `totalTypes` over cells where `type == "ae2:i"`.
+- `me.getTotalItemStorage()` / `me.getUsedItemStorage()` / `me.getAvailableItemStorage()` — for AE2 (unlike RS) these are **bytes**, not item counts, and already account for both type + count overhead — the simplest single number for "how full is the network." Mirrored by `*FluidStorage()`/`*ChemicalStorage()` variants.
+- `me.getFluids(filter?)`, `me.getChemicals(filter?)` — analogous listings for fluids/Mekanism chemicals.
+
+`show_me_status.lua` combines `getItems()` (types used + item count) with `getCells()` (type capacity) and the raw `get*ItemStorage()` byte totals.
 
 ### IDE Lua diagnostics
 
