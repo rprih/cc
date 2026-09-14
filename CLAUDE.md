@@ -19,6 +19,7 @@ CC: Tweaked is the scripting core; the other mods below expose extra **periphera
 | AE2 & JEI Integration (ae2ijeintegration) | 2.1.2 | Bridges Applied Energistics 2 items with JEI; not itself a peripheral API but affects what AE2 items/recipes show up. |
 | Applied Mekanistics | 1.6.3 | AE2 ↔ Mekanism compatibility (P2P/processing integration); relevant if scripts monitor/control Mekanism machines fed through AE2. |
 | Colony4ComputerCraft | 1.21.1-2.8.2 | Exposes MineColonies colony data/control as a CC: Tweaked peripheral. |
+| Mekanism | 1.21.1-10.7.19.85 | Adds Mekanism machines/chemicals; not a CC: Tweaked peripheral itself, but its chemicals are what `me_bridge`'s `getChemicals`/`getChemical`/`importChemical`/`exportChemical` methods read when Mekanism is piped into an AE2 network via Applied Mekanistics. |
 | Create Avionics | neoforge-1.0.0-By-NoxCrafted | Adds Create-based flight/avionics contraptions; may expose peripherals for controlling Create contraptions. |
 | Create Tweaked Controllers | 1.21.1-1.2.7 | Bridges Create mod components (contraptions, mechanical machinery) to CC: Tweaked peripherals/redstone. |
 | Iris | neoforge-1.8.14-beta.1+mc1.21.1 | Shader/rendering mod only — no gameplay or peripheral API surface relevant to scripting. |
