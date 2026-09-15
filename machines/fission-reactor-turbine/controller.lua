@@ -1,4 +1,4 @@
-package.path = package.path .. ""
+package.path = package.path .. ";/?.lua;/?/init.lua"
 
 local terminalUtils = require("common.terminal")
 local turbine = peripheral.find("turbineValve")
