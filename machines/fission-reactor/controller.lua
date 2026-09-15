@@ -1,3 +1,5 @@
+package.path = package.path .. ";/?.lua;/?/init.lua"
+
 local reactor = peripheral.find("fissionReactorLogicAdapter")
 local communication = require("common.communication")
 

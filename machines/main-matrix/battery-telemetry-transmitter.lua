@@ -1,3 +1,5 @@
+package.path = package.path .. ";/?.lua;/?/init.lua"
+
 local communication = require("common.communication")
 
 -- 1. Open rednet on any attached wireless/ender modem
